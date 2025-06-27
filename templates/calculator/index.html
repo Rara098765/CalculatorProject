@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Калькулятор ИМТ и Конвертер Валют</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #c78dad 0%, #679ce8 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+      padding: 20px; /* Add some padding for smaller screens */
+      box-sizing: border-box; /* Include padding in element's total width and height */
+    }
+
+    .container {
+      background: #fff;
+      padding: 2.5rem 3rem;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 460px;
+      box-sizing: border-box;
+      animation: fadeIn 0.8s ease-out; /* Added fade-in animation for the container */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      color: #c78dad;
+      letter-spacing: -0.02em; /* Subtle letter spacing */
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      color: #475467;
+      margin-bottom: 0.25rem;
+      display: block;
+      font-size: 0.95rem; /* Slightly smaller label font */
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1.8px solid #d0d5dd;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Added box-shadow transition */
+      box-sizing: border-box; /* Ensure padding doesn't increase total width */
+    }
+
+    input:focus, select:focus {
+      border-color: #4f46e5;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); /* Focus glow effect */
+    }
+
+    button {
+      background: #679ce8;
+      color: white;
+      font-weight: 600;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for press effect */
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); /* Subtle button shadow */
+    }
+
+    button:hover {
+      background: #4338ca;
+      transform: translateY(-2px); /* Slight lift on hover */
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3); /* Enhanced shadow on hover */
+    }
+
+    button:active {
+      transform: translateY(0); /* Press effect */
+      background: #3930a3;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+    }
+
+    .result {
+      margin-top: 2rem;
+      padding: 1.5rem 1.75rem;
+      border-left: 6px solid;
+      border-radius: 12px;
+      background: #f9fafb;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.05);
+      animation: slideIn 0.5s ease-out; /* Added slide-in animation for results */
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .result p {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+      line-height: 1.5; /* Improved readability */
+    }
+
+    .result strong {
+      color: inherit;
+    }
+
+    .color-low {
+      border-color: #fbbf24;
+      color: #92400e;
+    }
+    .color-normal {
+      border-color: #22c55e;
+      color: #166534;
+    }
+    .color-overweight {
+      border-color: #f97316;
+      color: #9a3412;
+    }
+    .color-obese {
+      border-color: #ef4444;
+      color: #b91c1c;
+    }
+
+    .error-message {
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      border-left: 6px solid #ef4444;
+      background: #fee2e2;
+      border-radius: 12px;
+      color: #b91c1c;
+      font-weight: 600;
+      animation: shake 0.4s ease-in-out; /* Added shake animation for errors */
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    hr {
+      margin: 2rem 0;
+      border: none;
+      border-top: 1px solid #e0e0e0; /* Lighter separator */
+    }
+
+    /* Currency converter specific styles */
+    .currency-form {
+      display: grid; /* Use CSS Grid for better alignment */
+      grid-template-columns: 1fr auto 1fr; /* Amount, arrow, target currency */
+      gap: 1rem; /* Gap between grid items */
+      align-items: center;
+      margin-bottom: 1.5rem; /* Space before the button */
+    }
+
+    .currency-form input[type="number"] {
+      grid-column: 1 / 2; /* Place amount in the first column */
+    }
+
+    .currency-form select:nth-of-type(1) { /* First select (from_currency) */
+      grid-column: 1 / 2; /* Place in the first column, below amount */
+    }
+
+    .currency-form span {
+      grid-column: 2 / 3; /* Place arrow in the second column */
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.3rem;
+      user-select: none;
+      color: #667085; /* Slightly muted arrow color */
+    }
+
+    .currency-form select:nth-of-type(2) { /* Second select (to_currency) */
+      grid-column: 3 / 4; /* Place in the third column */
+    }
+    
+    /* Place the convert button below the grid, spanning all columns */
+    .currency-form button[type="submit"] {
+      grid-column: 1 / -1; /* Span all columns */
+      margin-top: 0.5rem; /* Space between selects and button */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .container {
+        padding: 2rem 1.5rem;
+      }
+
+      .currency-form {
+        grid-template-columns: 1fr; /* Stack elements on small screens */
+        gap: 0.75rem;
+      }
+
+      .currency-form input[type="number"],
+      .currency-form select:nth-of-type(1),
+      .currency-form span,
+      .currency-form select:nth-of-type(2) {
+        grid-column: 1 / -1; /* All items span full width */
+      }
+      
+      .currency-form span {
+        margin: 0.5rem 0; /* Add vertical space around the arrow */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <h1>Калькулятор ИМТ</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="bmi" />
+      
+      <label for="weight">Вес (кг)</label>
+      <input
+        type="number"
+        id="weight"
+        name="weight"
+        step="0.1"
+        min="0"
+        required
+        value="{{ weight|default_if_none:'' }}"
+      />
+
+      <label for="height">Рост (см)</label>
+      <input
+        type="number"
+        id="height"
+        name="height"
+        step="0.1"
+        min="0"
+        required
+        value="{{ height|default_if_none:'' }}"
+      />
+
+      <button type="submit">Рассчитать ИМТ</button>
+    </form>
+
+    {% if bmi %}
+      <div class="result {{ category_class }}">
+        <p>Ваш ИМТ: <strong>{{ bmi }}</strong></p>
+        <p>Категория: <strong>{{ category }}</strong></p>
+        {% if ideal_weight %}
+          <p>Идеальный вес примерно: <strong>{{ ideal_weight }} кг</strong></p>
+        {% endif %}
+        {% if advice %}
+          <p>Совет: {{ advice }}</p>
+        {% endif %}
+      </div>
+    {% elif category and not bmi %}
+      <div class="error-message">{{ category }}</div>
+    {% endif %}
+
+    <hr />
+
+    <h2>Конвертер валют</h2>
+
+    <form method="post" class="currency-form">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="currency" />
+
+      <input type="number" name="amount" placeholder="Сумма" step="0.01" required 
+             value="{{ amount|default_if_none:'' }}" />
+      <select name="from_currency" required>
+        <option value="USD" {% if from_currency == 'USD' %}selected{% endif %}>USD</option>
+        <option value="EUR" {% if from_currency == 'EUR' %}selected{% endif %}>EUR</option>
+        <option value="KGS" {% if from_currency == 'KGS' %}selected{% endif %}>KGS</option>
+        <option value="RUB" {% if from_currency == 'RUB' %}selected{% endif %}>RUB</option>
+      </select>
+      <span>→</span>
+      <select name="to_currency" required>
+        <option value="KGS" {% if to_currency == 'KGS' %}selected{% endif %}>KGS</option>
+        <option value="USD" {% if to_currency == 'USD' %}selected{% endif %}>USD</option>
+        <option value="EUR" {% if to_currency == 'EUR' %}selected{% endif %}>EUR</option>
+        <option value="RUB" {% if to_currency == 'RUB' %}selected{% endif %}>RUB</option>
+      </select>
+      <button type="submit">Конвертировать</button>
+    </form>
+
+    {% if converted_amount %}
+      <div class="result">
+        <p>Результат: <strong>{{ converted_amount }}</strong></p>
+      </div>
+    {% elif conversion_error %}
+      <div class="error-message">{{ conversion_error }}</div>
+    {% endif %}
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: bmi-currency-app
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn bmi_calculator.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: bmi_calculator.settings

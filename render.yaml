@@ -3,7 +3,7 @@ services:
     name: bmi-currency-app
     env: python
     buildCommand: ""
-    startCommand: gunicorn bmi_calculator.wsgi:application
+    startCommand: gunicorn bmi_project_main.wsgi:application # <-- ИСПРАВЛЕНО
     envVars:
       - key: DJANGO_SETTINGS_MODULE
-        value: bmi_calculator.settings
+        value: bmi_project_main.settings 

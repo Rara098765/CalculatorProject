@@ -56,3 +56,10 @@ coverage.xml
 *.bak
 *.swp
 *.swo
+*.pyc
+__pycache__/
+db.sqlite3
+*.sqlite3
+.env
+*.log
+staticfiles/

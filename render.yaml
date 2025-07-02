@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: bmi-currency-app
+    name: bmi-django
     env: python
-    buildCommand: ""
-    startCommand: gunicorn bmi_project_main.wsgi:application # <-- ИСПРАВЛЕНО
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn bmi_project.wsgi:application"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
-        value: bmi_project_main.settings 
+        value: bmi_project.settings

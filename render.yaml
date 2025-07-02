@@ -1,9 +1,12 @@
+# Exported from Render on 2025-07-02T14:35:04Z
 services:
-  - type: web
-    name: bmi-django
-    env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn bmi_project.wsgi:application"
-    envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: bmi_project.settings
+- type: web
+  name: CalculatorProject
+  runtime: python
+  repo: https://github.com/Rara098765/CalculatorProject
+  plan: free
+  region: oregon
+  buildCommand: pip install -r requirements.txt
+  startCommand: gunicorn app:app
+  autoDeployTrigger: commit
+version: "1"
